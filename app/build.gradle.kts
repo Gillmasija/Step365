@@ -18,8 +18,6 @@ android {
         kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas") } }
     }
     buildFeatures { compose = true }
-    // Features are integrated in verified milestones after the baseline build.
-    sourceSets["main"].java.exclude("**/domain/**", "**/ui/**", "**/widget/**", "**/data/**", "**/tracking/**")
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
     testOptions { unitTests.isIncludeAndroidResources = true }
