@@ -1,0 +1,16 @@
+<resources>
+    <color name="step_icon_background">#211A30</color>
+    <string name="step_widget_heading">DAILY STEPS</string>
+    <string name="step_widget_description">Your daily steps, estimated distance and calories, and 365-day challenge progress.</string>
+    <string name="step_widget_open">Open Step365</string>
+    <string name="step_widget_goal">of %1$s steps</string>
+    <string name="step_widget_preview_goal">of 10,000 steps</string>
+    <string name="step_widget_kcal">%1$s kcal</string>
+    <string name="step_widget_add_weight">— add weight</string>
+    <string name="step_widget_distance_label">EST. DISTANCE</string>
+    <string name="step_widget_calories_label">EST. ACTIVITY</string>
+    <string name="step_widget_before_challenge">Starts 22 Nov 2026</string>
+    <string name="step_widget_after_challenge">365-day challenge ended</string>
+    <string name="step_widget_challenge_day">Day %1$d / 365</string>
+    <string name="step_widget_fixed_goal">Challenge goal: 10,000 steps</string>
+</resources>
