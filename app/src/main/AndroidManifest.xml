@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
     <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="false" />
-    <application android:label="Step365" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/Theme.Step365" android:allowBackup="false" android:supportsRtl="true">
+    <application android:label="Step365" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/Theme.Step365" android:allowBackup="false" android:dataExtractionRules="@xml/data_extraction_rules" android:supportsRtl="true">
         <service android:name=".tracking.TrackingService" android:exported="false" android:foregroundServiceType="health" android:stopWithTask="false" />
         <receiver android:name=".tracking.RecoveryReceiver" android:exported="false">
             <intent-filter>

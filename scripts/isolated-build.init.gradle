@@ -1,0 +1,7 @@
+// Optional Windows/synced-folder workaround. Sources stay in the repository.
+def outputRoot = System.getenv('STEP365_BUILD_ROOT')
+if (outputRoot) {
+    gradle.beforeProject { project ->
+        project.layout.buildDirectory.set(new File(outputRoot, project.name))
+    }
+}
