@@ -1,13 +1,14 @@
-# Step365 screenshot plan
+# Step365 device screenshots
 
-Save original Android captures in this directory. Use the filenames below when adding images to the project README. Crop or redact personal information before publishing.
+These six captures are from a physical Android phone on November 22, 2026. The phone model, Android version, and installed app build were not recorded in the supplied images.
 
-| File | Capture |
+| Capture | Visible observations |
 | --- | --- |
-| `today-218-steps.png` | Today screen at 218 steps. Include calories if visible. |
-| `today-239-steps.png` | Today screen at 239 steps, with 0.17 km and 8 kcal if visible. |
-| `calendar-day-01.png` | November 2026 calendar with November 22 selected. |
-| `statistics-day-01.png` | Statistics screen showing day-one progress. |
-| `tracking-step-detector.png` | Active tracking with a connected step detector, if this needs its own capture. |
+| [Today at 225 steps](today-225-steps.jpeg) | 0.16 km and 7 estimated kcal. |
+| [Today at 226 steps](today-226-steps.jpeg) | 0.16 km and 7 estimated kcal. |
+| [Today at 233 steps](today-233-steps.jpeg) | 0.16 km and 8 estimated kcal. |
+| [Calendar on day one](calendar-day-01.jpeg) | November 22 is highlighted as today. |
+| [Statistics at 239 steps](statistics-239-steps.jpeg) | 0.17 estimated km and zero-day streaks. |
+| [Statistics at 249 steps](statistics-249-steps.jpeg) | 0.17 estimated km and zero-day streaks. |
 
-For each published image, record the app version and Android version if known. Include descriptive alt text. If the original screenshots are unavailable, use new captures and label them with their actual date and values.
+All three Today captures show active tracking and a connected step detector. These snapshots document the UI during initial use on one device. Controlled walks and longer sessions are needed to measure step accuracy and background reliability.
