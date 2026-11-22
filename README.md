@@ -45,14 +45,13 @@ I conceived Step365, defined its requirements, configured and tested it on a phy
 
 ## Screenshots
 
-Original phone screenshots are pending. The [screenshot plan](docs/screenshots/README.md) lists what to capture and where to save each image.
+Captured on a physical Android phone on November 22, 2026, the first day of the challenge.
 
-| Screen | Planned image |
-| --- | --- |
-| Today | Two captures showing 218 and 239 steps |
-| Calendar | November 2026 with challenge day one selected |
-| Statistics | Challenge progress on day one |
-| Tracking status | Active tracking and connected step detector, if shown separately from Today |
+| Today | Calendar | Statistics |
+| --- | --- | --- |
+| <img src="docs/screenshots/today-233-steps.jpeg" width="220" alt="Today screen showing 233 steps, 0.16 km, 8 estimated kcal, and an active step detector"> | <img src="docs/screenshots/calendar-day-01.jpeg" width="220" alt="November 2026 calendar with November 22 highlighted as today"> | <img src="docs/screenshots/statistics-249-steps.jpeg" width="220" alt="Statistics screen showing 249 challenge steps, 0.17 estimated km, and current and longest streaks of zero days"> |
+
+See all six captures in the [screenshot gallery](docs/screenshots/README.md).
 
 ## Testing
 
@@ -72,7 +71,7 @@ The [verification report](VERIFICATION.md) records the local build, lint, and AP
 
 ### Initial observations on a physical Android phone
 
-On **November 22, 2026**, my phone screenshots showed the step count rising from **218 to 239**, estimated distance reaching **0.17 km**, and estimated calories rising from **7 to 8 kcal**. The app showed active tracking and a connected step detector. Calendar and Statistics displayed the first day of the challenge.
+On **November 22, 2026**, my phone captures showed **225, 226, and 233 steps** on Today and **239 and 249 total challenge steps** on Statistics. Estimated distance was **0.16 km** on Today and **0.17 km** in the Statistics captures. Estimated activity calories rose from **7 to 8 kcal** on Today, which also showed active tracking and a connected step detector. Calendar highlighted November 22 as the first day of the challenge.
 
 These snapshots document an initial interaction on one device. Measuring count accuracy, screen-off delivery, and long-term reliability requires controlled walks and longer runs.
 
@@ -102,4 +101,4 @@ The [Android APK workflow](.github/workflows/android.yml) is configured to run t
 - Test counted walking routes and extended screen-off sessions across multiple Android phones, including battery restrictions and reboot recovery.
 - Measure sensor delivery latency and evaluate detector-first tracking on different devices.
 - Resolve the hosted SDK setup failure and establish a signed distribution path for repeatable updates.
-- Capture authentic screenshots and check readability with larger fonts and accessibility settings.
+- Check readability with larger fonts and accessibility settings.
