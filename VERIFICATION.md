@@ -4,7 +4,7 @@ Verified delivery: **22 November 2026**. Native Kotlin/Compose Android applicati
 
 ## Installable artifact
 
-- File: [Step365-debug.apk](deliverables/Step365-debug.apk)
+- Local build artifact: `Step365-debug.apk`
 - Size: **17,447,922 bytes**
 - Package: `com.step365.app`
 - Minimum: Android 8.0 / API 26; target and compile SDK: Android 16 / API 36
@@ -47,9 +47,9 @@ $env:STEP365_BUILD_ROOT = Join-Path $env:TEMP 'Step365-build'
 .\gradlew.bat --no-daemon --max-workers=1 -I scripts/isolated-build.init.gradle testDebugUnitTest lintDebug assembleDebug '-Pkotlin.compiler.execution.strategy=in-process' '-Pkotlin.incremental=false'
 ```
 
-Final reports and the successful build log are copied under [deliverables/verification](deliverables/verification). Signature and package reports are `signature.txt` and `package.txt`; the checksum is also saved in [SHA256SUMS.txt](deliverables/SHA256SUMS.txt).
+The original local delivery saved the successful build log, JUnit XML, lint report, signature details, package metadata, and checksum under `deliverables/`. That directory is excluded from Git. The five saved JUnit XML suites were checked during the README review and total 56 tests with zero failures and zero errors.
 
-The GitHub Actions workflow is configured and its YAML was parsed successfully. **It was not run on GitHub**: the APK was built and verified locally, and this repository has no configured remote.
+The results above come from a local build. The subsequent [GitHub Actions run](https://github.com/Gillmasija/Step365/actions/runs/45035099669) failed during Android SDK setup, before tests or APK packaging.
 
 ## Device-dependent limits
 

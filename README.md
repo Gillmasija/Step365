@@ -1,80 +1,105 @@
 # Step365
 
-A native, offline Android step tracker for a fixed 365-day challenge: **22 November 2026 through 21 November 2027**, inclusive. Complete **10,000 recorded steps per day**, for a challenge target of **3,650,000 steps**. The challenge never restarts automatically.
+**A minimalist native Android step tracker built around one daily goal.**
 
-Step365 uses Kotlin, Jetpack Compose and Material 3, Room, Android step sensors, a health foreground service, and a resizable RemoteViews home-screen widget. It supports Android 8.0 (API 26) and later, including Android 15, and targets API 36. It has no account, advertisements, subscription, GPS collection, or runtime internet permission.
+Step365 tracks steps and progress through a fixed 365-day walking challenge. It keeps the daily count, estimates, and challenge history in one place, without advertising, accounts, or subscriptions.
 
-## Install on your phone
+## Problem and solution
 
-1. Download **Step365-debug.apk** from the delivered artifact onto your phone. If using GitHub Actions, open a successful **Android APK** run, download the **Step365-debug** artifact, and extract its ZIP to find the APK.
-2. Open the APK in your browser or file manager. If Android requests it, allow **Install unknown apps** for that specific source. You can turn that permission off again afterward.
-3. Install **Step365** and open it.
-4. Tap **Allow physical activity**, grant permission, then tap **Start tracking**. In Settings, use the notification switch to allow notifications if you want to see tracking in the notification drawer. Android still requires a foreground-service notification even if notification permission is denied.
-5. Keep your phone with you while walking. Confirm that the dashboard reports an available sensor and active tracking. A device without a compatible sensor displays an explanation and does not invent steps.
-6. To add the widget, long-press an empty area of your home screen, choose **Widgets**, find **Step365**, and drag the widget onto the home screen. Resize it using your launcher's handles. Tap it to open the app.
-7. If background collection stops, open Step365's settings and review the phone's app battery settings. Manufacturer labels vary; permit background activity or select an unrestricted battery setting if you want ongoing collection. Android and the phone manufacturer retain control over background execution.
-8. Open **Calendar** to review daily progress and tap a date for its recorded steps, estimated distance, estimated activity calories, and completion status.
+Fitness apps can make a simple question—“How far along am I today?”—harder to answer with ads, extra metrics, and complicated navigation. Step365 puts the daily step count first, then lets users explore the calendar or statistics when they want more detail. The home-screen widget makes progress visible without opening the app.
 
-The app can collect steps before and after the challenge; challenge statistics only include the configured challenge dates. The displayed daily total follows the phone's local date.
+The challenge runs from **November 22, 2026 through November 21, 2027**. Its target stays at **10,000 steps per day** even when a user changes their personal dashboard goal. The calendar distinguishes a finished day below goal with reliable coverage from a day with incomplete tracking.
 
-## What the data means
+## My role
 
-- The **original challenge goal remains 10,000 steps**. Changing the personal daily goal affects personal daily progress and the widget, without changing challenge scoring or historical challenge achievements.
-- **Green** means a finished challenge day has at least 10,000 recorded steps. **Red** means a finished day has reliable recorded coverage and fewer than 10,000 steps. **Purple** identifies today and its progress. **Gray** covers future dates and dates without sufficient recording. Dates outside the challenge are identified separately. Today is never marked missed before it ends.
-- Reaching 10,000 observed steps establishes completion even if some recording was unavailable. A partial low total cannot establish failure and remains missing-data status.
-- Current streak includes today if today's challenge goal is complete; otherwise yesterday's streak remains available until today ends. An ended missed or missing day breaks a consecutive completion streak. Previously completed days remain saved.
-- Completion rate uses completed **finished** days divided by all finished challenge days, including missing-data days. Missing days are also reported separately. Average steps uses elapsed challenge days, including today and missing-data days. Time progress is finished challenge days divided by 365; remaining days includes today while it can still be completed.
+I conceived Step365, defined its requirements, configured and tested it on a physical Android phone, evaluated its interface, and iterated on the user experience. I used AI assistance during development, including implementation and automated verification. My contributions centered on product direction, requirements, device testing, and interface feedback.
 
-Distance is an estimate: `steps × stride length in meters ÷ 1000`. Default stride is **0.70 m**, adjustable in Settings. Kilometers are displayed to two decimal places.
+## Key features
 
-Estimated **activity** calories use `0.5 × body weight in kilograms × estimated kilometers`, a simple approximation for net energy used during level walking, excluding resting energy. Weight is optional; calories remain unavailable until weight is supplied. Terrain, pace, gait, and individual physiology affect actual expenditure. These estimates are not medical measurements. Changing stride or weight recalculates estimates from stored steps.
+| Feature | What it does |
+| --- | --- |
+| Step tracking | Shows recorded steps and progress toward an adjustable personal daily goal. A foreground service supports tracking while the app is in the background. |
+| Estimated distance | Multiplies steps by an adjustable stride length, which defaults to 0.70 m. |
+| Estimated activity calories | Uses 0.5 × body weight in kg × distance in km. The estimate is available after the user enters a weight. |
+| 365-day calendar | Shows the status of each challenge day and opens daily details for recorded activity. |
+| Progress statistics and streaks | Shows total challenge steps, completed and missed days, missing coverage, and current and longest streaks. |
+| Home-screen widget | Shows daily progress from the same stored records as the dashboard and opens the app when tapped. |
 
-## Tracking and privacy limits
+## Technology stack
 
-The preferred sensor is `TYPE_STEP_COUNTER`; its lifetime cumulative reading is used only as a baseline, never credited as today's total. `TYPE_STEP_DETECTOR` is a fallback when the counter is unavailable. Sensor checkpoints and daily records prevent duplicate credit across ordinary restarts. Database writes are transactional. Midnight, reboot, counter reset, and clock/time-zone changes are treated conservatively so uncertain steps are not fabricated or silently assigned to the wrong day.
+| Layer | Repository implementation |
+| --- | --- |
+| Language and build | Kotlin 2.1.20, Gradle 8.13, Android Gradle Plugin 8.11.1. Minimum SDK 26, compile and target SDK 36. |
+| UI | Jetpack Compose with Material 3, AndroidX ViewModel, and lifecycle-aware state collection. |
+| Data | Room 2.7.1, Kotlin coroutines and Flow. |
+| Android integration | Step sensors, a health foreground service, a boot and package update receiver, and a RemoteViews widget. |
+| Testing and CI | JUnit 4, Robolectric, Compose UI tests, Android Lint, and GitHub Actions. |
 
-Tracking runs in a visible health foreground service when Android permits it. Step events drive database and widget updates. Widgets are subject to launcher/platform scheduling, with a 30-minute scheduled fallback; updates are not guaranteed every second. Battery restrictions, permission revocation, force stop, process termination, device shutdown, or sensor unavailability can interrupt recording. Reboot recovery attempts to restart a previously enabled health tracking service when platform rules permit it. **After a force stop, reopen the app to resume tracking.**
+[App dependency and SDK configuration](app/build.gradle.kts) · [Build plugins](build.gradle.kts)
 
-Step365 has no historical health-data integration. It cannot promise recovery of steps taken while tracking was unavailable. The first sensor sample establishes a baseline, and ambiguous intervals are marked incomplete. Small gaps or day-boundary intervals may therefore undercount rather than create misleading totals.
+## Architecture
 
-History and preferences remain on the device. No cloud account or analytics is used, and Android application backup is disabled. **Clearing app data or uninstalling can erase all history and settings.** Keep this in mind before replacing an APK that Android cannot update in place.
+1. **Collect.** The tracking service on GitHub’s current app revision uses Android’s cumulative step counter when available and falls back to the per-step detector. The counter’s first reading establishes a baseline. The reducer handles duplicates, resets, and uncertain date boundaries. A foreground notification accompanies tracking, and the recovery receiver attempts to restart previously enabled tracking after reboot or an app update. [Tracking service](app/src/main/java/com/step365/app/tracking/TrackingService.kt) · [Recovery receiver](app/src/main/java/com/step365/app/tracking/RecoveryReceiver.kt) · [Counter reducer](app/src/main/java/com/step365/app/domain/CounterReducer.kt)
+2. **Persist.** The repository saves the step increment and sensor checkpoint in a single Room transaction. Daily records, coverage information, and preferences stay on the device. Distance and calories derive from stored steps and current preferences. [Repository](app/src/main/java/com/step365/app/data/StepRepository.kt) · [Room schema](app/src/main/java/com/step365/app/data/StepDatabase.kt) · [Challenge rules](app/src/main/java/com/step365/app/domain/Challenge.kt)
+3. **Present.** The ViewModel turns repository updates into state for the Today, Calendar, Statistics, and Settings screens. The widget reads the same repository for its own refreshes. [ViewModel](app/src/main/java/com/step365/app/ui/StepViewModel.kt) · [Compose navigation](app/src/main/java/com/step365/app/ui/Step365App.kt) · [Widget](app/src/main/java/com/step365/app/widget/StepWidget.kt)
 
-## Build the Android Studio project
+## Screenshots
 
-Install JDK 21 and an Android SDK containing **platform 36**, **build-tools 36.0.0**, and platform-tools. Open this directory in Android Studio, or set `JAVA_HOME` and `ANDROID_HOME` for command-line builds. An Android Studio-generated `local.properties` can specify the SDK path instead. The Gradle wrapper downloads the pinned Gradle distribution, and the first build downloads dependencies.
+Original phone screenshots are pending. The [screenshot plan](docs/screenshots/README.md) lists what to capture and where to save each image.
 
-On Windows:
+| Screen | Planned image |
+| --- | --- |
+| Today | Two captures showing 218 and 239 steps |
+| Calendar | November 2026 with challenge day one selected |
+| Statistics | Challenge progress on day one |
+| Tracking status | Active tracking and connected step detector, if shown separately from Today |
 
-```powershell
-.\gradlew.bat testDebugUnitTest lintDebug assembleDebug
-```
+## Testing
 
-On macOS/Linux:
+### Automated verification
+
+The original local Android build recorded **56 passing tests, zero failures, and zero errors**. The suite totals were checked against the saved JUnit XML reports.
+
+| Suite | Passed | Coverage |
+| --- | ---: | --- |
+| ChallengeTest | 19 | Dates, estimates, statuses, streaks, and statistics |
+| CounterReducerTest | 12 | Baselines, duplicate readings, resets, and ambiguous dates |
+| StepRepositoryTest | 19 | Room persistence, transactions, date changes, and service session handling |
+| NavigationTest | 4 | Compose calendar navigation, statistics, and settings |
+| SmokeTest | 2 | Activity launch and widget inflation under Robolectric API 35 |
+
+The [verification report](VERIFICATION.md) records the local build, lint, and APK checks. The [test checklist](TESTING.md) covers device scenarios. The [GitHub Actions run](https://github.com/Gillmasija/Step365/actions/runs/45035099669) failed during Android SDK setup before tests or APK packaging.
+
+### Initial observations on a physical Android phone
+
+On **November 22, 2026**, my phone screenshots showed the step count rising from **218 to 239**, estimated distance reaching **0.17 km**, and estimated calories rising from **7 to 8 kcal**. The app showed active tracking and a connected step detector. Calendar and Statistics displayed the first day of the challenge.
+
+These snapshots document an initial interaction on one device. Measuring count accuracy, screen-off delivery, and long-term reliability requires controlled walks and longer runs.
+
+## Known limitations
+
+- Sensor support and event timing vary by device. Android can delay or interrupt background collection during battery restrictions, after a force stop, or when permissions change. Screen-off tracking and reboot recovery still need more hardware testing.
+- Steps from unavailable sensor or service periods cannot be reliably reconstructed. Ambiguous intervals can undercount and are marked incomplete. Widget updates are throttled.
+- Distance and calories are estimates. Stride, terrain, and walking pace can affect how closely they match actual activity.
+- History is local to the device. Clearing app data or uninstalling can erase it. Installing an update over an existing copy requires the same signing identity.
+
+## Installation and local build
+
+Install JDK 21 and Android SDK Platform 36 with Build Tools 36.0.0. Open the repository in Android Studio or set `JAVA_HOME` and `ANDROID_HOME` for the command line.
 
 ```sh
-chmod +x gradlew
 ./gradlew testDebugUnitTest lintDebug assembleDebug
 ```
 
-The output is `app/build/outputs/apk/debug/app-debug.apk`. Copy it as `Step365-debug.apk` for delivery. The `.github/workflows/android.yml` workflow performs the same verification on push, pull request, or manual dispatch and uploads a downloadable APK plus available verification reports. A configured workflow alone is not proof that a build ran; consult its run result and the delivered verification notes.
+On Windows, use `.\gradlew.bat` with the same tasks. The APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
 
-If Windows or a synced folder locks generated files, keep sources here and use an isolated output directory:
+Transfer the debug APK to an Android 8.0 or later phone, open it, and allow installation from the browser or file manager if prompted. Launch Step365, grant **Physical activity** access, and start tracking. To add the widget, long-press the home screen and choose **Widgets → Step365**.
 
-```powershell
-$env:STEP365_BUILD_ROOT = Join-Path $env:TEMP 'Step365-build'
-.\gradlew.bat --no-daemon --max-workers=1 -I scripts/isolated-build.init.gradle testDebugUnitTest lintDebug assembleDebug
-```
+The [Android APK workflow](.github/workflows/android.yml) is configured to run tests and lint and upload the APK after a successful build. Use the local build while the hosted SDK setup failure is unresolved.
 
-The APK then appears under `$env:STEP365_BUILD_ROOT/app/outputs/apk/debug/`. See [VERIFICATION.md](VERIFICATION.md) for the exact delivered artifact and executed checks.
+## Future improvements
 
-## Signing and future updates
-
-The development APK is debug-signed and installable outside Google Play. It is not a production release-signed APK. An in-place update must use the same application ID, a compatible version code, and **the same signing identity**. Preserve the local debug keystore used for this delivery, or use a dedicated private release key for future production builds. Never commit a private signing key to the repository.
-
-Fresh GitHub Actions runners normally generate a new debug key. Their APKs may therefore be incompatible with an existing installation's signing identity. An uninstall/reinstall can resolve that conflict but erases local history. A stable private signing key supplied securely to CI is required before treating CI artifacts as reliable in-place updates.
-
-## Architecture and verification
-
-The `domain` package contains challenge dates, estimates, streak/statistics rules, and counter reduction. The `data` package owns Room persistence, checkpoints, and local preferences. The tracking service integrates Android sensor and foreground-service lifecycles. Compose screens observe persisted state through lifecycle-aware state collection. The widget reads the same repository rather than keeping a separate step total. Schema exports are versioned; future database changes require explicit migrations rather than destructive resets.
-
-See [TESTING.md](TESTING.md) for the automated verification commands and physical-device acceptance checklist. Device walking, battery behavior, and launcher behavior must be distinguished from JVM tests and emulator smoke checks.
+- Test counted walking routes and extended screen-off sessions across multiple Android phones, including battery restrictions and reboot recovery.
+- Measure sensor delivery latency and evaluate detector-first tracking on different devices.
+- Resolve the hosted SDK setup failure and establish a signed distribution path for repeatable updates.
+- Capture authentic screenshots and check readability with larger fonts and accessibility settings.
