@@ -35,17 +35,19 @@ class StepRepository internal constructor(private val db: StepDatabase) {
         dao.putPreferences((dao.preferences() ?: PreferencesEntity()).copy(enabled = enabled))
     }
 
-    suspend fun begin(date: LocalDate, zone: String, boot: Int, now: Long) = db.withTransaction {
+    suspend fun begin(date: LocalDate, zone: String, boot: Int, now: Long, session: String = "") = db.withTransaction {
         val old = dao.tracker()
         // Recovery after process death cannot certify an uninterrupted day.
         if (old != null && old.date.isNotEmpty()) markPartial(old.date, now)
         markPartial(date.toString(), now)
         dao.putTracker(TrackerEntity(date = date.toString(), zoneId = zone, bootCount = boot,
-            heartbeat = now, active = true, status = "Waiting for your first step"))
+            heartbeat = now, active = true, status = "Waiting for your first step", session = session))
     }
 
-    suspend fun stop(message: String, now: Long) = db.withTransaction {
+    suspend fun stop(message: String, now: Long, expectedSession: String? = null) = db.withTransaction {
         val tracker = dao.tracker() ?: TrackerEntity()
+        // A destroyed service may finish asynchronously after its replacement has already started.
+        if (expectedSession != null && tracker.session != expectedSession) return@withTransaction
         if (tracker.date.isNotEmpty()) markPartial(tracker.date, now)
         dao.putTracker(tracker.copy(raw = null, active = false, coverage = false, status = message, heartbeat = now))
     }

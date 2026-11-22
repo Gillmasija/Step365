@@ -17,7 +17,7 @@ data class TrackerEntity(@PrimaryKey val id: Int = 1, val raw: Long? = null,
     val elapsedNanos: Long = 0, val date: String = "", val zoneId: String = "",
     val sampleDate: String = "", val sampleZone: String = "",
     val bootCount: Int = -1, val heartbeat: Long = 0, val active: Boolean = false,
-    val coverage: Boolean = false, val status: String = "Ready to start")
+    val coverage: Boolean = false, val status: String = "Ready to start", val session: String = "")
 
 @Dao
 interface StepDao {

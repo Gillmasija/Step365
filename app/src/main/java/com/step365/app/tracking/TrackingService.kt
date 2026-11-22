@@ -19,6 +19,7 @@ import com.step365.app.widget.StepWidget
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.time.*
+import java.util.UUID
 
 object TrackingRuntime {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -32,6 +33,7 @@ object TrackingRuntime {
 }
 
 class TrackingService : Service(), SensorEventListener {
+    private val session = UUID.randomUUID().toString()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val samples = Channel<Reading>(Channel.UNLIMITED)
     private lateinit var repository: StepRepository
@@ -45,7 +47,7 @@ class TrackingService : Service(), SensorEventListener {
         override fun onReceive(context: Context, intent: Intent) {
             scope.launch {
                 if (intent.action == Intent.ACTION_TIME_CHANGED || intent.action == Intent.ACTION_TIMEZONE_CHANGED) {
-                    repository.begin(LocalDate.now(), ZoneId.systemDefault().id, boot(), System.currentTimeMillis())
+                    repository.begin(LocalDate.now(), ZoneId.systemDefault().id, boot(), System.currentTimeMillis(), session)
                 } else repository.heartbeat(LocalDate.now(), ZoneId.systemDefault().id, System.currentTimeMillis())
                 publish(true)
             }
@@ -83,7 +85,7 @@ class TrackingService : Service(), SensorEventListener {
         if (!started) {
             started = true
             scope.launch {
-                repository.begin(LocalDate.now(), ZoneId.systemDefault().id, boot(), System.currentTimeMillis())
+                repository.begin(LocalDate.now(), ZoneId.systemDefault().id, boot(), System.currentTimeMillis(), session)
                 val registered = withContext(Dispatchers.Main) {
                     try { manager.registerListener(this@TrackingService, sensor, SensorManager.SENSOR_DELAY_NORMAL, 0) }
                     catch (_: RuntimeException) { false }
@@ -153,7 +155,7 @@ class TrackingService : Service(), SensorEventListener {
     }
     private fun fail(message: String) {
         stopReason = message
-        TrackingRuntime.scope.launch { repository.stop(message, System.currentTimeMillis()); StepWidget.refresh(this@TrackingService) }
+        TrackingRuntime.scope.launch { repository.stop(message, System.currentTimeMillis(), if (started) session else null); StepWidget.refresh(this@TrackingService) }
         stopSelf()
     }
     override fun onDestroy() {
@@ -162,7 +164,7 @@ class TrackingService : Service(), SensorEventListener {
         scope.cancel()
         samples.close()
         TrackingRuntime.scope.launch {
-            repository.stop(stopReason, System.currentTimeMillis())
+            repository.stop(stopReason, System.currentTimeMillis(), session)
             StepWidget.refresh(this@TrackingService)
         }
         super.onDestroy()

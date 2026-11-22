@@ -107,6 +107,27 @@ class StepRepositoryTest {
         assertFalse(day.complete)
     }
 
+    @Test fun `stale service shutdown cannot stop its replacement session`() = runBlocking {
+        repository.begin(first, zone, boot, time(), session = "old")
+        repository.counter(sample(40_000, 1_000), time())
+        repository.counter(sample(40_010, 2_000), time() + 1)
+        repository.begin(first, zone, boot, time() + 2, session = "new")
+        val beforeStaleStop = repository.snapshot()
+        repository.stop("Old service destroyed", time() + 3, expectedSession = "old")
+        val current = repository.snapshot()
+        assertTrue(current.tracker.active)
+        assertEquals("new", current.tracker.session)
+        assertEquals(beforeStaleStop.tracker, current.tracker)
+        assertEquals(beforeStaleStop.records, current.records)
+        assertEquals(10L, current.records.single().steps)
+        repository.stop("Current service stopped", time() + 4, expectedSession = "new")
+        val stopped = repository.snapshot()
+        assertFalse(stopped.tracker.active)
+        assertEquals("new", stopped.tracker.session)
+        assertEquals("Current service stopped", stopped.tracker.status)
+        assertEquals(10L, stopped.records.single().steps)
+    }
+
     @Test fun `counter reset preserves daily total without counting new raw baseline`() = runBlocking {
         repository.begin(first, zone, boot, time())
         repository.counter(sample(100_000, 1_000), time())

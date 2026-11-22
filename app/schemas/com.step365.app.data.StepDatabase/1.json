@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "28d1d02394b99e9d9299bf863baed02d",
+    "identityHash": "af8e6b09f6fc327d69a3c2bfd31aeb26",
     "entities": [
       {
         "tableName": "days",
@@ -83,7 +83,7 @@
       },
       {
         "tableName": "tracker",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `raw` INTEGER, `elapsedNanos` INTEGER NOT NULL, `date` TEXT NOT NULL, `zoneId` TEXT NOT NULL, `sampleDate` TEXT NOT NULL, `sampleZone` TEXT NOT NULL, `bootCount` INTEGER NOT NULL, `heartbeat` INTEGER NOT NULL, `active` INTEGER NOT NULL, `coverage` INTEGER NOT NULL, `status` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `raw` INTEGER, `elapsedNanos` INTEGER NOT NULL, `date` TEXT NOT NULL, `zoneId` TEXT NOT NULL, `sampleDate` TEXT NOT NULL, `sampleZone` TEXT NOT NULL, `bootCount` INTEGER NOT NULL, `heartbeat` INTEGER NOT NULL, `active` INTEGER NOT NULL, `coverage` INTEGER NOT NULL, `status` TEXT NOT NULL, `session` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -155,6 +155,12 @@
             "columnName": "status",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "session",
+            "columnName": "session",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -167,7 +173,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '28d1d02394b99e9d9299bf863baed02d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'af8e6b09f6fc327d69a3c2bfd31aeb26')"
     ]
   }
 }
